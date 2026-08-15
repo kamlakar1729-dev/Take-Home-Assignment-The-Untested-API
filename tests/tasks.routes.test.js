@@ -180,3 +180,42 @@ describe("Task Routes", () => {
     expect(response.body.done).toBe(1);
   });
 });
+
+test("PATCH /tasks/:id/assign should assign task", async () => {
+  const task = taskService.create({
+    title: "Assign Me",
+  });
+
+  const response = await request(app)
+    .patch(`/tasks/${task.id}/assign`)
+    .send({
+      assignee: "Kamalakar",
+    });
+
+  expect(response.statusCode).toBe(200);
+  expect(response.body.assignee).toBe("Kamalakar");
+});
+
+test("PATCH /tasks/:id/assign should return 400 for empty assignee", async () => {
+  const task = taskService.create({
+    title: "Assign Me",
+  });
+
+  const response = await request(app)
+    .patch(`/tasks/${task.id}/assign`)
+    .send({
+      assignee: "",
+    });
+
+  expect(response.statusCode).toBe(400);
+});
+
+test("PATCH /tasks/:id/assign should return 404 for invalid task", async () => {
+  const response = await request(app)
+    .patch("/tasks/invalid-id/assign")
+    .send({
+      assignee: "Kamalakar",
+    });
+
+  expect(response.statusCode).toBe(404);
+});

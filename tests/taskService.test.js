@@ -143,3 +143,26 @@ describe("Task Service", () => {
     expect(page1[0].title).toBe("Task 1");
   });
 });
+
+
+test("should assign task to user", () => {
+  const task = taskService.create({
+    title: "Assignment Task",
+  });
+
+  const updated = taskService.assignTask(
+    task.id,
+    "Kamalakar"
+  );
+
+  expect(updated.assignee).toBe("Kamalakar");
+});
+
+test("should return null when assigning non-existing task", () => {
+  const result = taskService.assignTask(
+    "invalid-id",
+    "Kamalakar"
+  );
+
+  expect(result).toBeNull();
+});

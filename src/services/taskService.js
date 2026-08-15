@@ -6,7 +6,8 @@ const getAll = () => [...tasks];
 
 const findById = (id) => tasks.find((t) => t.id === id);
 
-const getByStatus = (status) => tasks.filter((t) => t.status === status);
+const getByStatus = (status) =>
+  tasks.filter((t) => t.status === status);
 
 const getPaginated = (page, limit) => {
   const offset = (page - 1) * limit;
@@ -15,7 +16,12 @@ const getPaginated = (page, limit) => {
 
 const getStats = () => {
   const now = new Date();
-  const counts = { todo: 0, in_progress: 0, done: 0 };
+  const counts = {
+    todo: 0,
+    in_progress: 0,
+    done: 0,
+  };
+
   let overdue = 0;
 
   tasks.forEach((t) => {
@@ -54,9 +60,11 @@ const create = ({
     dueDate,
     completedAt: null,
     createdAt: new Date().toISOString(),
+    assignee: null,
   };
 
   tasks.push(task);
+
   return task;
 };
 
@@ -85,6 +93,7 @@ const remove = (id) => {
   }
 
   tasks.splice(index, 1);
+
   return true;
 };
 
@@ -102,6 +111,26 @@ const completeTask = (id) => {
   };
 
   const index = tasks.findIndex((t) => t.id === id);
+
+  tasks[index] = updated;
+
+  return updated;
+};
+
+const assignTask = (id, assignee) => {
+  const task = findById(id);
+
+  if (!task) {
+    return null;
+  }
+
+  const updated = {
+    ...task,
+    assignee,
+  };
+
+  const index = tasks.findIndex((t) => t.id === id);
+
   tasks[index] = updated;
 
   return updated;
@@ -121,5 +150,6 @@ module.exports = {
   update,
   remove,
   completeTask,
+  assignTask,
   _reset,
 };
